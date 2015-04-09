@@ -23,12 +23,33 @@
     </div>
   </div>
 </nav>
+<form id="inputs" name="settings">
+	Grid Size: 
+	<input type="text"
+		name="input"
+	   ng-model="gridsize"
+	   >
+  </form>
 <svg ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">  
     <circle ng-repeat="node in nodes" 
         ng-attr-cx="{{xpos($index)}}" 
         ng-attr-cy="{{ypos($index)}}" 
-        ng-attr-r= "{{minradius}}"
-        ng-click="circleClick($index)"
+        ng-attr-r= "{{minradius + node.stability}}"
+        ng-click="tapNode($index)"
+        class="blue">
+    </circle>
+    <line ng-repeat="node in nodes"
+    	ng-attr-x1="{{xpos($index)}}"
+    	ng-attr-y1="{{ypos($index)}}"
+    	ng-attr-x2="{{xpos(node.target)}}"
+    	ng-attr-y2="{{ypos(node.target)}}"
+    	class="blueline"
+    	ng-style="{'opacity':'+lineOpacity(node.stability)+'}">
+    </line>
+    <circle ng-repeat="bit in bits" 
+        ng-attr-cx="{{bit.x}}" 
+        ng-attr-cy="{{bit.y}}" 
+        ng-attr-r= "{{bitradius}}"
         class="blue">
     </circle>
 </svg>  

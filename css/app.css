@@ -2,6 +2,11 @@
 	fill:#26466D;
 }
 
+.blueline {
+	stroke:#26466D;
+	stroke-width=4;
+}
+
 .no-selection {
     -webkit-user-select: none; /* webkit (safari, chrome) browsers */
     -moz-user-select: none; /* mozilla browsers */
