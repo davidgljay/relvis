@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" ng-app="relvisApp">
+<head>
+  <meta charset="utf-8">
+  <title>Relationship Model Visualization</title>
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="css/app.css">
+  <script src="bower_components/angular/angular.js"></script>
+    <script src="app/controllers.js"></script>
+</head>
+<body ng-controller="relvisCtrl">
+<nav <nav class="navbar navbar-default no-selection">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">{{'Relationship Visualization'}}</a>
+    </div>
+  </div>
+</nav>
+<svg ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">  
+    <circle ng-repeat="node in nodes" 
+        ng-attr-cx="{{xpos($index)}}" 
+        ng-attr-cy="{{ypos($index)}}" 
+        ng-attr-r= "{{minradius}}"
+        ng-click="circleClick($index)"
+        class="blue">
+    </circle>
+</svg>  
+</body>
+</html>
