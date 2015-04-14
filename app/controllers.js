@@ -1,54 +1,51 @@
 var relvisApp = angular.module('relvisApp', []);
 
 relvisApp.controller('relvisCtrl', function ($scope, $interval) {
-	var gridsize
-	var gridroot
-	var maxStability = $scope.maxStability = 20
-	$scope.bitEscapeChance = bitEscapeChance = 10
-	var stabilityBoost = 2
-	var initialStability = 2
-	$scope.minradius = 5
+
+	//TODOS:
+	//Emergent Targetting
+	//Sliders
+
+	//Model variables
+	$scope.maxStability = 20
+	$scope.bitEscapeChance = 0
+	$scope.minradius = 2
 	$scope.bitradius = 3
+	$scope.gridsize = 25
+	$scope.initialStability = 0 
+	$scope.bitVisibility = 1
+	$scope.numTargets=1
+	$scope.locality=1
+	var stabilityBoost = 2
+	var gridroot
+
+	//Styling variables
 	var padding = 60
-	var nodes = $scope.nodes=[]
-	var bits = $scope.bits=[]
+	var maxLineWidth = 4
 	var timeCounter = 0
+
+	//Promise variables
 	var transmitLoop
 	var bitLoop
 
+	//Data arrays
+	var nodes = $scope.nodes=[]
+	var bits = $scope.bits=[]
+	var lines = $scope.lines=[]
+
 	$scope.$watch('gridsize', function() {
-		gridsize = $scope.gridsize
-		gridroot = Math.floor(Math.sqrt(gridsize))
-		$scope.nodes=[]
-		for (var i = gridsize - 1; i>= 0; i--) {
-			$scope.nodes.push({
-				stability:initialStability,
-				target:randInt(0,gridsize-1)
-			})
-		};
+		resetGrid()
+	})
 
-		if (transmitLoop) {
-			$interval.cancel(transmitLoop)
+	$scope.$watch('initialStability', function() {
+		resetGrid()
+	})
+
+	$scope.$watch('locality', function() {
+		if ($scope.locality > gridroot) {
+			$scope.locality = gridroot
 		}
-		transmitLoop = setTransmitLoop()
-
-		if (bitLoop) {
-			$interval.cancel(bitLoop)
-		}
-		bitLoop = setBitLoop()
-
-		nodes = $scope.nodes
 	})
-
-	$scope.$watch('maxStability', function() {
-		maxStability = $scope.maxStability
-	})
-
-	$scope.$watch('maxStability', function() {
-		maxStability = $scope.maxStability
-	})
-
-	$scope.gridsize = 25
 
 	$scope.graph= {
 		height:800,
@@ -64,16 +61,8 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 	}
 
 	$scope.tapNode = function(index) {
-		if ($scope.nodes[index].stability <= maxStability) {
+		if ($scope.nodes[index].stability <= $scope.maxStability) {
 			$scope.nodes[index].stability++
-		}
-	}
-
-	$scope.lineOpacity = function(stability) {
-		if (stability > maxStability/2) {
-			return stability/maxStability
-		} else {
-			return 0
 		}
 	}
 
@@ -100,35 +89,91 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 					bits[i].completion++
 					bits[i].x = bits[i].completion/100*(xpos(bits[i].target)-xpos(bits[i].sender)) + xpos(bits[i].sender)
 					bits[i].y = bits[i].completion/100*(ypos(bits[i].target)-ypos(bits[i].sender)) + ypos(bits[i].sender)
-					if(bits[i].completion==100 && nodes[bits[i].target] && nodes[bits[i].target].stability < maxStability) {
+					if(bits[i].completion==100 && nodes[bits[i].target] && nodes[bits[i].target].stability < $scope.maxStability) {
 						nodes[bits[i].target].stability += stabilityBoost
 					}				
 				} else {
 					bits.remove(i)
 				}
 			};
-		},20)
+		},1)
 	}
 
 	var setTransmitLoop = function() {
 		return $interval(function() {
 			timeCounter++
-			var i = timeCounter%gridsize
+			var i = timeCounter%$scope.gridsize
 			if (nodes[i] && nodes[i].stability) {
-				nodes[i].stability--
-				if (randInt(0,maxStability) > nodes[i].stability) {
-					if (randInt(0,100) < bitEscapeChance) {
-						nodes[i].target = parseInt(gridsize) + randInt(0,gridroot-1)				
-					} else {
-						nodes[i].target = randInt(0,gridsize-1)					
+				$scope.lines.remove(i)
+				for (var j =0; j<$scope.numTargets; j++) {
+					if (randInt(0,$scope.maxStability) > nodes[i].stability) {
+						if (randInt(0,100) < $scope.bitEscapeChance) {
+							nodes[i].targets[j] = parseInt($scope.gridsize) + randInt(0,gridroot-1)				
+						} else {
+							var deltaX=Math.round(randInt($scope.locality*-1,$scope.locality))
+							var deltaY=Math.round(randInt($scope.locality*-1,$scope.locality)*gridroot)
+							if (deltaY==deltaX==0) {
+								deltaX=-1	
+							}
+							if (i+deltaY+deltaX > $scope.gridsize || i+deltaY+deltaX < 0) {
+								deltaY=deltaY*-1
+								deltaX=deltaX*-1
+							}
+							nodes[i].targets[j] = i+deltaX+deltaY		
+						} 
+					} 
+					transmit(i,nodes[i].targets[j])
+					if (nodes[i].stability>0) {
+						nodes[i].stability--						
+					}
+					var targetLine={
+						"style": {
+							"opacity": nodes[i].stability/$scope.maxStability-.5,
+						},
+						"target":nodes[i].targets[j],
+						"sender":i
+					}
+					if (0<nodes[i].targets[j] && nodes[i].targets[j]<$scope.gridsize) {
+						$scope.lines.push(targetLine)
 					}
 				}
-				transmit(i,nodes[i].target)
 			}
-		}, 1500/gridsize) 
+		}, 1500/$scope.gridsize) 
+	}
+
+	var resetGrid = function() {
+		gridroot = Math.floor(Math.sqrt($scope.gridsize))
+		$scope.nodes=[]
+
+		$scope.lines=[]
+		for (var i = 0; i<= $scope.gridsize - 1; i++) {
+			$scope.nodes.push({
+				stability:$scope.initialStability,
+				targets:[],
+				lineWidth:0
+			})
+			for (var j = $scope.numTargets; j > 0; j--) {
+				$scope.nodes[i].targets.push(
+					randInt(0,$scope.gridsize-1)
+				)
+			};
+		};
+
+		if (transmitLoop) {
+			$interval.cancel(transmitLoop)
+		}
+		transmitLoop = setTransmitLoop()
+
+		if (bitLoop) {
+			$interval.cancel(bitLoop)
+		}
+		bitLoop = setBitLoop()
+
+		nodes = $scope.nodes
 	}
 
 });
+
 
 
 

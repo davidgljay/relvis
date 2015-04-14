@@ -5,6 +5,7 @@
   <title>Relationship Model Visualization</title>
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="css/app.css">
+
   <script src="bower_components/angular/angular.js"></script>
     <script src="app/controllers.js"></script>
 </head>
@@ -29,6 +30,36 @@
 		name="input"
 	   ng-model="gridsize"
 	   >
+	Leakiness(%): 
+	<input type="text"
+		name="input"
+	   ng-model="bitEscapeChance"
+	   >
+	MaxSize: 
+	<input type="text"
+		name="input"
+	   ng-model="maxStability"
+	   >
+  <br>
+  Inital Size: 
+  <input type="text"
+    name="input"
+     ng-model="initialStability"
+     >  
+  Bit Range:
+  <input type="text"
+    name="locality"
+    ng-model="locality">
+  Bits per Node:
+  <input type="text"
+    name="numTargets"
+    ng-model="numTargets">
+    <br>
+  Bit Visibility:
+  <input type="text"
+    name="bitVisibility"
+    ng-model="bitVisibility">
+
   </form>
 <svg ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">  
     <circle ng-repeat="node in nodes" 
@@ -38,19 +69,20 @@
         ng-click="tapNode($index)"
         class="blue">
     </circle>
-    <line ng-repeat="node in nodes"
-    	ng-attr-x1="{{xpos($index)}}"
-    	ng-attr-y1="{{ypos($index)}}"
-    	ng-attr-x2="{{xpos(node.target)}}"
-    	ng-attr-y2="{{ypos(node.target)}}"
-    	class="blueline"
-    	ng-style="{'opacity':'+lineOpacity(node.stability)+'}">
+    <line ng-repeat="line in lines"
+    	ng-attr-x1="{{xpos(line.sender)}}"
+    	ng-attr-y1="{{ypos(line.sender)}}"
+    	ng-attr-x2="{{xpos(line.target)}}"
+    	ng-attr-y2="{{ypos(line.target)}}"
+    	ng-style="line.style"
+    	class="blue_line">
     </line>
     <circle ng-repeat="bit in bits" 
         ng-attr-cx="{{bit.x}}" 
         ng-attr-cy="{{bit.y}}" 
         ng-attr-r= "{{bitradius}}"
-        class="blue">
+        class="blue"
+        ng-style="{opacity:{{bitVisibility}}}">
     </circle>
 </svg>  
 </body>
