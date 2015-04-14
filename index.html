@@ -5,9 +5,11 @@
   <title>Relationship Model Visualization</title>
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" type="text/css" href="node_modules/ng-slider/dist/css/ng-slider.min.css">
 
   <script src="bower_components/angular/angular.js"></script>
-    <script src="app/controllers.js"></script>
+  <script src="node_modules/ng-slider/dist/ng-slider.min.js"></script>
+  <script src="app/controllers.js"></script>
 </head>
 <body ng-controller="relvisCtrl">
 <nav <nav class="navbar navbar-default no-selection">
@@ -24,43 +26,6 @@
     </div>
   </div>
 </nav>
-<form id="inputs" name="settings">
-	Grid Size: 
-	<input type="text"
-		name="input"
-	   ng-model="gridsize"
-	   >
-	Leakiness(%): 
-	<input type="text"
-		name="input"
-	   ng-model="bitEscapeChance"
-	   >
-	MaxSize: 
-	<input type="text"
-		name="input"
-	   ng-model="maxStability"
-	   >
-  <br>
-  Inital Size: 
-  <input type="text"
-    name="input"
-     ng-model="initialStability"
-     >  
-  Bit Range:
-  <input type="text"
-    name="locality"
-    ng-model="locality">
-  Bits per Node:
-  <input type="text"
-    name="numTargets"
-    ng-model="numTargets">
-    <br>
-  Bit Visibility:
-  <input type="text"
-    name="bitVisibility"
-    ng-model="bitVisibility">
-
-  </form>
 <svg ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">  
     <circle ng-repeat="node in nodes" 
         ng-attr-cx="{{xpos($index)}}" 
@@ -82,8 +47,52 @@
         ng-attr-cy="{{bit.y}}" 
         ng-attr-r= "{{bitradius}}"
         class="blue"
-        ng-style="{opacity:{{bitVisibility}}}">
+        ng-style="{opacity:{{bitVisibility/100}}}">
     </circle>
-</svg>  
+</svg> 
+<form id="inputs" name="settings">
+  <label>Grid Size</label>
+  <input type="text"
+    name="input"
+     ng-model="gridsize"
+     slider
+     options="gridsizeOptions"
+     >
+  Leakiness: 
+  <input type="text"
+    name="input"
+     ng-model="bitEscapeChance"
+      slider
+     options="percentageOptions"
+     >
+  <br>
+  Inital Bits: 
+  <input type="text"
+    name="input"
+     ng-model="initialStability"
+     slider
+     options="initialBitOptions"
+     >  
+  Bit Range:
+  <input type="text"
+    name="locality"
+    ng-model="locality"
+    slider
+    options="rangeOptions">
+    <br>
+  Bits per Node:
+  <input type="text"
+    name="numTargets"
+    ng-model="numTargets"
+    slider
+    options="bitsPerNodeOptions">
+
+  Bit Visibility:
+  <input type="text"
+    name="bitVisibility"
+    ng-model="bitVisibility"
+    slider
+    options="percentageOptions">
+  </form> 
 </body>
 </html>

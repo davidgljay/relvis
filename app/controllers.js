@@ -1,4 +1,4 @@
-var relvisApp = angular.module('relvisApp', []);
+var relvisApp = angular.module('relvisApp', ['ngSlider']);
 
 relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 
@@ -7,15 +7,15 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 	//Sliders
 
 	//Model variables
-	$scope.maxStability = 20
+	$scope.maxStability = 15
 	$scope.bitEscapeChance = 0
 	$scope.minradius = 2
 	$scope.bitradius = 3
 	$scope.gridsize = 25
-	$scope.initialStability = 0 
-	$scope.bitVisibility = 1
+	$scope.initialStability = 1 
+	$scope.bitVisibility = 100
 	$scope.numTargets=1
-	$scope.locality=1
+	$scope.locality=3
 	var stabilityBoost = 2
 	var gridroot
 
@@ -35,6 +35,12 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 
 	$scope.$watch('gridsize', function() {
 		resetGrid()
+		$scope.rangeOptions = {
+			from:0,
+			to:gridroot,
+			step:1,
+			skin:"round"
+		}
 	})
 
 	$scope.$watch('initialStability', function() {
@@ -47,10 +53,43 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 		}
 	})
 
-	$scope.graph= {
-		height:800,
-		width:800
+
+	$scope.gridsizeOptions = {
+		from:0,
+		to:300,
+		step:1,
+		skin:"round"
 	}
+
+	$scope.initialBitOptions = {
+		from:0,
+		to:5,
+		step:1,
+		skin:"round"
+	}
+
+	$scope.percentageOptions = {
+		from:0,
+		to:100,
+		step:1,
+		dimension:"%",
+		skin:"round"
+	}
+
+	$scope.rangeOptions = {
+		from:0,
+		to:gridroot,
+		step:1,
+		skin:"round"
+	}
+
+	$scope.bitsPerNodeOptions = {
+		from:0,
+		to:3,
+		step:1,
+		skin:"round"
+	}
+
 
 	var xpos = $scope.xpos = function(index) {
 		return index%gridroot * padding + padding
@@ -110,16 +149,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 						if (randInt(0,100) < $scope.bitEscapeChance) {
 							nodes[i].targets[j] = parseInt($scope.gridsize) + randInt(0,gridroot-1)				
 						} else {
-							var deltaX=Math.round(randInt($scope.locality*-1,$scope.locality))
-							var deltaY=Math.round(randInt($scope.locality*-1,$scope.locality)*gridroot)
-							if (deltaY==deltaX==0) {
-								deltaX=-1	
-							}
-							if (i+deltaY+deltaX > $scope.gridsize || i+deltaY+deltaX < 0) {
-								deltaY=deltaY*-1
-								deltaX=deltaX*-1
-							}
-							nodes[i].targets[j] = i+deltaX+deltaY		
+							nodes[i].targets[j] = i+findTarget(i)
 						} 
 					} 
 					transmit(i,nodes[i].targets[j])
@@ -133,7 +163,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 						"target":nodes[i].targets[j],
 						"sender":i
 					}
-					if (0<nodes[i].targets[j] && nodes[i].targets[j]<$scope.gridsize) {
+					if (0<=nodes[i].targets[j] && nodes[i].targets[j]<$scope.gridsize) {
 						$scope.lines.push(targetLine)
 					}
 				}
@@ -143,6 +173,10 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 
 	var resetGrid = function() {
 		gridroot = Math.floor(Math.sqrt($scope.gridsize))
+		$scope.graph= {
+			height:(gridroot+1)*padding,
+			width:(gridroot+1)*padding
+		}
 		$scope.nodes=[]
 
 		$scope.lines=[]
@@ -154,7 +188,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 			})
 			for (var j = $scope.numTargets; j > 0; j--) {
 				$scope.nodes[i].targets.push(
-					randInt(0,$scope.gridsize-1)
+					j+findTarget(j)
 				)
 			};
 		};
@@ -170,6 +204,20 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 		bitLoop = setBitLoop()
 
 		nodes = $scope.nodes
+	}
+
+	var findTarget = function(pos) {
+			var deltaX=Math.round(randInt($scope.locality*-1,$scope.locality))
+			var deltaY=Math.round(randInt($scope.locality*-1,$scope.locality)*gridroot)
+			if (deltaY==0 || deltaX==0) {
+				//Don't target yourself
+				return findTarget(pos)	
+			}
+			if (pos+deltaY+deltaX > $scope.gridsize || pos+deltaY+deltaX < 0) {
+				//Don't target outside of the grid
+				return findTarget(pos)
+			}
+		return deltaX+deltaY
 	}
 
 });

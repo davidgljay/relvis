@@ -1,5 +1,11 @@
-input[type=text] {
-	width:30px;
+#inputs {
+	margin:20px;
+}
+
+.jslider {
+	max-width:400px;
+	margin-top:20px;
+	margin-bottom:20px;
 }
 
 .blue {
