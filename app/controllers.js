@@ -39,7 +39,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 			from:0,
 			to:gridroot,
 			step:1,
-			skin:"round"
+			css:slidercss
 		}
 	})
 
@@ -53,19 +53,28 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 		}
 	})
 
+	var slidercss = {
+        background: {"background-color": "white"},
+        before: {"background-color": "#26466D"},
+        default: {"background-color": "white"},
+        after: {"background-color": "#26466D"},
+        range:{"visibility":"hidden"},
+        pointer: {"background-color": "#26466D"}  	
+	}
 
 	$scope.gridsizeOptions = {
 		from:0,
-		to:300,
+		to:100,
 		step:1,
-		skin:"round"
+		vertical:false,
+		css:slidercss
 	}
 
 	$scope.initialBitOptions = {
 		from:0,
 		to:5,
 		step:1,
-		skin:"round"
+		css:slidercss
 	}
 
 	$scope.percentageOptions = {
@@ -73,22 +82,23 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 		to:100,
 		step:1,
 		dimension:"%",
-		skin:"round"
+		css:slidercss
 	}
 
 	$scope.rangeOptions = {
 		from:0,
 		to:gridroot,
 		step:1,
-		skin:"round"
+		css:slidercss
 	}
 
 	$scope.bitsPerNodeOptions = {
 		from:0,
 		to:3,
 		step:1,
-		skin:"round"
+		css:slidercss
 	}
+
 
 
 	var xpos = $scope.xpos = function(index) {
@@ -174,7 +184,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 	var resetGrid = function() {
 		gridroot = Math.floor(Math.sqrt($scope.gridsize))
 		$scope.graph= {
-			height:(gridroot+1)*padding,
+			height:(gridroot+2)*padding,
 			width:(gridroot+1)*padding
 		}
 		$scope.nodes=[]
@@ -213,7 +223,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 				//Don't target yourself
 				return findTarget(pos)	
 			}
-			if (pos+deltaY+deltaX > $scope.gridsize || pos+deltaY+deltaX < 0) {
+			if (pos+deltaY+deltaX > $scope.gridsize-1 || pos+deltaY+deltaX < 0) {
 				//Don't target outside of the grid
 				return findTarget(pos)
 			}

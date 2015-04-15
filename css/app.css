@@ -8,6 +8,10 @@
 	margin-bottom:20px;
 }
 
+#inputs div.jslider-value, #inputs .jslider-label {
+	font-size: 12px;
+}
+
 .blue {
 	fill:#26466D;
 }
