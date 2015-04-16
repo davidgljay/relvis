@@ -2,11 +2,7 @@ var relvisApp = angular.module('relvisApp', ['ngSlider']);
 
 relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 
-	//TODOS:
-	//Emergent Targetting
-	//Sliders
-
-	//Model variables
+	//Variables used to define the behavior of the model.
 	$scope.maxStability = 15
 	$scope.bitEscapeChance = 0
 	$scope.minradius = 2
@@ -23,8 +19,9 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 	var padding = 60
 	var maxLineWidth = 4
 	var timeCounter = 0
+	$scope.title = "Relational Networks"
 
-	//Promise variables
+	//Variables used to track timers that update the model and provide animation
 	var transmitLoop
 	var bitLoop
 
@@ -33,64 +30,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 	var bits = $scope.bits=[]
 	var lines = $scope.lines=[]
 
-	$scope.$watch('gridsize', function() {
-		resetGrid()
-		$scope.rangeOptions = {
-			from:0,
-			to:gridroot,
-			step:1,
-			skin:"round"
-		}
-	})
-
-	$scope.$watch('initialStability', function() {
-		resetGrid()
-	})
-
-	$scope.$watch('locality', function() {
-		if ($scope.locality > gridroot) {
-			$scope.locality = gridroot
-		}
-	})
-
-
-	$scope.gridsizeOptions = {
-		from:0,
-		to:300,
-		step:1,
-		skin:"round"
-	}
-
-	$scope.initialBitOptions = {
-		from:0,
-		to:5,
-		step:1,
-		skin:"round"
-	}
-
-	$scope.percentageOptions = {
-		from:0,
-		to:100,
-		step:1,
-		dimension:"%",
-		skin:"round"
-	}
-
-	$scope.rangeOptions = {
-		from:0,
-		to:gridroot,
-		step:1,
-		skin:"round"
-	}
-
-	$scope.bitsPerNodeOptions = {
-		from:0,
-		to:3,
-		step:1,
-		skin:"round"
-	}
-
-
+	//Calculate the X and Y position of nodes.
 	var xpos = $scope.xpos = function(index) {
 		return index%gridroot * padding + padding
 	}
@@ -99,12 +39,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 		return Math.floor(index/gridroot) * padding + padding;
 	}
 
-	$scope.tapNode = function(index) {
-		if ($scope.nodes[index].stability <= $scope.maxStability) {
-			$scope.nodes[index].stability++
-		}
-	}
-
+	//Transmit a bit from one node to another.
 	var transmit = function(sender, target) {
 			var senderx = xpos(sender)
 			var sendery = ypos(sender)
@@ -120,7 +55,24 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 			})
 	}
 
-	//Transmit bits
+	//Function which lets a node find a new target.
+	//Note, targets are returned as a delta from the nodes' current position.
+	var findTarget = function(pos) {
+			var deltaX=Math.round(randInt($scope.locality*-1,$scope.locality))
+			var deltaY=Math.round(randInt($scope.locality*-1,$scope.locality)*gridroot)
+			if (deltaY==0 || deltaX==0) {
+				//Don't target yourself
+				return findTarget(pos)	
+			}
+			if (pos+deltaY+deltaX > $scope.gridsize || pos+deltaY+deltaX < 0) {
+				//Don't target outside of the grid
+				return findTarget(pos)
+			}
+		return deltaX+deltaY
+	}
+
+	//Animate the bits as they move from one node to another. 
+	//When a bit reaches a node, increase that node's stability.
 	var setBitLoop = function() {
 		return $interval(function() {
 			for (var i = bits.length - 1; i >= 0; i--) {
@@ -138,6 +90,8 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 		},1)
 	}
 
+	//Cycle through all of the nodes.
+	//If a node has some stability, transmit a bit and decrease its stability.
 	var setTransmitLoop = function() {
 		return $interval(function() {
 			timeCounter++
@@ -171,11 +125,15 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 		}, 1500/$scope.gridsize) 
 	}
 
+	//Reset the grid.
+	//Eliminate all bits and lines, and set all nodes to the default stability.
 	var resetGrid = function() {
 		gridroot = Math.floor(Math.sqrt($scope.gridsize))
+		var height = $scope.gridsize%gridroot == 0 ? (gridroot+2) * padding : (gridroot+3)*padding;
+		var width = (gridroot+1)*padding
 		$scope.graph= {
-			height:(gridroot+1)*padding,
-			width:(gridroot+1)*padding
+			height:height,
+			width:width
 		}
 		$scope.nodes=[]
 
@@ -193,6 +151,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 			};
 		};
 
+		//Restart the timers to transmit and animate bits.
 		if (transmitLoop) {
 			$interval.cancel(transmitLoop)
 		}
@@ -206,24 +165,77 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 		nodes = $scope.nodes
 	}
 
-	var findTarget = function(pos) {
-			var deltaX=Math.round(randInt($scope.locality*-1,$scope.locality))
-			var deltaY=Math.round(randInt($scope.locality*-1,$scope.locality)*gridroot)
-			if (deltaY==0 || deltaX==0) {
-				//Don't target yourself
-				return findTarget(pos)	
-			}
-			if (pos+deltaY+deltaX > $scope.gridsize || pos+deltaY+deltaX < 0) {
-				//Don't target outside of the grid
-				return findTarget(pos)
-			}
-		return deltaX+deltaY
+	//Trigger events when the user manipulates model variables (ie, when the user changes the grid size reset everything.)
+	$scope.$watch('gridsize', function() {
+		resetGrid()
+		$scope.rangeOptions = {
+			from:0,
+			to:gridroot,
+			step:1,
+			skin:"round"
+		}
+	})
+
+	$scope.$watch('initialStability', function() {
+		resetGrid()
+	})
+
+	$scope.$watch('locality', function() {
+		if ($scope.locality > gridroot) {
+			$scope.locality = gridroot
+		}
+	})
+
+	setSliderOptions($scope, gridroot);
+
+	//Make a node more stable when the user taps it.
+	$scope.tapNode = function(index) {
+		if ($scope.nodes[index].stability <= $scope.maxStability) {
+			$scope.nodes[index].stability++
+		}
 	}
+
 
 });
 
+//Set options for the sliders.
+var setSliderOptions = function(scope,gridroot) {
+	scope.gridsizeOptions = {
+		from:0,
+		to:300,
+		step:1,
+		skin:"round"
+	}
 
+	scope.initialBitOptions = {
+		from:0,
+		to:5,
+		step:1,
+		skin:"round"
+	}
 
+	scope.percentageOptions = {
+		from:0,
+		to:100,
+		step:1,
+		dimension:"%",
+		skin:"round"
+	}
+
+	scope.rangeOptions = {
+		from:0,
+		to:gridroot,
+		step:1,
+		skin:"round"
+	}
+
+	scope.bitsPerNodeOptions = {
+		from:0,
+		to:3,
+		step:1,
+		skin:"round"
+	}
+}
 
 var randInt = function(min,max) {
 	return (Math.floor(Math.random() * (max - min + 1)) + min);
