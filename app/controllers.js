@@ -128,8 +128,8 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 	//Reset the grid.
 	//Eliminate all bits and lines, and set all nodes to the default stability.
 	var resetGrid = function() {
-		gridroot = Math.floor(Math.sqrt($scope.gridsize))
-		var height = $scope.gridsize%gridroot == 0 ? (gridroot+2) * padding : (gridroot+3)*padding;
+		gridroot = Math.round(Math.sqrt($scope.gridsize))
+		var height = (gridroot+2)*padding //$scope.gridsize%gridroot == 0 ? (gridroot+2) * padding : (gridroot+3)*padding;
 		var width = (gridroot+1)*padding
 		$scope.graph= {
 			height:height,
@@ -202,7 +202,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 var setSliderOptions = function(scope,gridroot) {
 	scope.gridsizeOptions = {
 		from:0,
-		to:300,
+		to:100,
 		step:1,
 		skin:"round"
 	}

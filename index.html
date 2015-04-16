@@ -10,6 +10,7 @@
   <script src="bower_components/angular/angular.js"></script>
   <script src="node_modules/ng-slider/dist/ng-slider.min.js"></script>
   <script src="app/controllers.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body ng-controller="relvisCtrl">
 <nav <nav class="navbar navbar-default no-selection">
@@ -27,7 +28,7 @@
   </div>
 </nav>
 <div id="intro" class="box">
-  <h3>How do stable relationships emerge from chaos?</h3>
+  <h4>How do stable relationships emerge from chaos?</h4>
   <div id="introtext">
       <p><b>Relational networks</b> are an analytical tool for exploring how networks of relationships change over time. Think of them as graph theory with a play button.</p>
       <p>These networks are defined as follows:
@@ -35,80 +36,83 @@
             <li>Let there be a set of N nodes.</li>
             <li>Let each node be capable of transmitting packets of information to other nodes.</li>
             <li>Let each node choose which other node or nodes it will transmit to according to some probability distribution.</li>
-            <li>When a node receives a packet, let its probability distribution be transformed in some way.</li>
+            <li>When a node sends or receives a packet, let its probability distribution be transformed in some way.</li>
        </ul>
       </p>
       It is my hope that by studying this class of networks we might gain a deeper understanding of systems in which discrete entities dynamically share information.
   </div>
-  <div id="relnetwork">
-    <svg id="visualization" ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">  
-        <circle ng-repeat="node in nodes" 
-            ng-attr-cx="{{xpos($index)}}" 
-            ng-attr-cy="{{ypos($index)}}" 
-            ng-attr-r= "{{minradius + node.stability}}"
-            ng-click="tapNode($index)"
-            class="blue">
-        </circle>
-        <line ng-repeat="line in lines"
-        	ng-attr-x1="{{xpos(line.sender)}}"
-        	ng-attr-y1="{{ypos(line.sender)}}"
-        	ng-attr-x2="{{xpos(line.target)}}"
-        	ng-attr-y2="{{ypos(line.target)}}"
-        	ng-style="line.style"
-        	class="blue_line">
-        </line>
-        <circle ng-repeat="bit in bits" 
-            ng-attr-cx="{{bit.x}}" 
-            ng-attr-cy="{{bit.y}}" 
-            ng-attr-r= "{{bitradius}}"
-            class="blue"
-            ng-style="{opacity:{{bitVisibility/100}}}">
-        </circle>
-    </svg> 
-    <form id="inputs" name="settings">
-      <label>Grid Size</label>
-      <input type="text"
-        name="input"
-         ng-model="gridsize"
-         slider
-         options="gridsizeOptions"
-         >
-      Leakiness: 
-      <input type="text"
-        name="input"
-         ng-model="bitEscapeChance"
-          slider
-         options="percentageOptions"
-         >
+</div>
+<div id="relnetwork">
+  <svg id="visualization" ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">  
+    <circle ng-repeat="node in nodes" 
+        ng-attr-cx="{{xpos($index)}}" 
+        ng-attr-cy="{{ypos($index)}}" 
+        ng-attr-r= "{{minradius + node.stability}}"
+        ng-click="tapNode($index)"
+        class="blue">
+    </circle>
+    <line ng-repeat="line in lines"
+    	ng-attr-x1="{{xpos(line.sender)}}"
+    	ng-attr-y1="{{ypos(line.sender)}}"
+    	ng-attr-x2="{{xpos(line.target)}}"
+    	ng-attr-y2="{{ypos(line.target)}}"
+    	ng-style="line.style"
+    	class="blue_line">
+    </line>
+    <circle ng-repeat="bit in bits" 
+        ng-attr-cx="{{bit.x}}" 
+        ng-attr-cy="{{bit.y}}" 
+        ng-attr-r= "{{bitradius}}"
+        class="blue"
+        ng-style="{opacity:{{bitVisibility/100}}}">
+    </circle>
+  </svg> 
+  <div id="legend">
+    <em>A simple relational network. Each node has a "stability" value, indicated by its size. A node with high stability will always send its packet to the same place in the grid, while a node with low stability will randomly rotate where it sends it packet. Lines are drawn to illustrate the formation of stable edges within the network.</em>
+  <form id="inputs" name="settings">
+    <h3>Settings</h3>
+    <label>Grid Size</label>
+    <input type="text"
+      name="input"
+       ng-model="gridsize"
+       slider
+       options="gridsizeOptions"
+       >
+    <label>Leakiness </label>
+    <input type="text"
+      name="input"
+       ng-model="bitEscapeChance"
+        slider
+       options="percentageOptions"
+       >
+    <br>
+    <label>Inital Bits </label>
+    <input type="text"
+      name="input"
+       ng-model="initialStability"
+       slider
+       options="initialBitOptions"
+       >  
+    <label>Bit Range</label>
+    <input type="text"
+      name="locality"
+      ng-model="locality"
+      slider
+      options="rangeOptions">
       <br>
-      Inital Bits: 
-      <input type="text"
-        name="input"
-         ng-model="initialStability"
-         slider
-         options="initialBitOptions"
-         >  
-      Bit Range:
-      <input type="text"
-        name="locality"
-        ng-model="locality"
-        slider
-        options="rangeOptions">
-        <br>
-      Bits per Node:
-      <input type="text"
-        name="numTargets"
-        ng-model="numTargets"
-        slider
-        options="bitsPerNodeOptions">
-
-      Bit Visibility:
-      <input type="text"
-        name="bitVisibility"
-        ng-model="bitVisibility"
-        slider
-        options="percentageOptions">
-      </form> 
-    </div>
+    <label>Bits per Node</label>
+    <input type="text"
+      name="numTargets"
+      ng-model="numTargets"
+      slider
+      options="bitsPerNodeOptions">
+    <label>Bit Visibility</label>
+    <input type="text"
+      name="bitVisibility"
+      ng-model="bitVisibility"
+      slider
+      options="percentageOptions">
+  </form> 
+</div>
 </body>
 </html>

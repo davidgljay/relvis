@@ -1,11 +1,43 @@
-#inputs {
-	margin:20px;
+@media (min-width: 900px) { 
+	#intro {
+		margin-left: 10%;
+		width:40%;
+		float:left;
+	}
+
+	#relnetwork {
+		margin-right: 10%;
+		width:40%;
+		float:right; 
+	}
+}
+
+@media (max-width: 900px) {
+		#intro {
+		margin-left: 10%;
+		width:80%;
+		margin-right:10%;
+	}
+
+	#relnetwork {
+		margin-left: 10%;
+		width:80%;
+		margin-right: 10%;
+	}
 }
 
 .jslider {
-	max-width:400px;
+	width:90%;
+	margin-right: 5%;
+	margin-left: 5%;
 	margin-top:20px;
 	margin-bottom:20px;
+}
+
+
+
+#inputs {
+	margin:20px;
 }
 
 .blue {
