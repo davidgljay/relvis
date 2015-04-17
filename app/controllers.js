@@ -19,7 +19,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 	var padding = 60
 	var maxLineWidth = 4
 	var timeCounter = 0
-	$scope.title = "Relational Networks"
+	$scope.title = "Edgless Networks"
 
 	//Variables used to track timers that update the model and provide animation
 	var transmitLoop
@@ -64,7 +64,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 				//Don't target yourself
 				return findTarget(pos)	
 			}
-			if (pos+deltaY+deltaX > $scope.gridsize || pos+deltaY+deltaX < 0) {
+			if (pos+deltaY+deltaX > $scope.gridsize-1 || pos+deltaY+deltaX < 0) {
 				//Don't target outside of the grid
 				return findTarget(pos)
 			}
@@ -128,8 +128,8 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 	//Reset the grid.
 	//Eliminate all bits and lines, and set all nodes to the default stability.
 	var resetGrid = function() {
-		gridroot = Math.round(Math.sqrt($scope.gridsize))
-		var height = (gridroot+2)*padding //$scope.gridsize%gridroot == 0 ? (gridroot+2) * padding : (gridroot+3)*padding;
+		gridroot = Math.min(Math.round(Math.sqrt($scope.gridsize)),8);
+		var height = ($scope.gridsize/gridroot+1)*padding;
 		var width = (gridroot+1)*padding
 		$scope.graph= {
 			height:height,

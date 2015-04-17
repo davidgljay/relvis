@@ -2,11 +2,11 @@
 <html lang="en" ng-app="relvisApp">
 <head>
   <meta charset="utf-8">
-  <title>Relational Network Visualization</title>
+  <title>Edgeless Network Visualization</title>
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" type="text/css" href="node_modules/ng-slider/dist/css/ng-slider.min.css">
-
+  <link href='http://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
   <script src="bower_components/angular/angular.js"></script>
   <script src="node_modules/ng-slider/dist/ng-slider.min.js"></script>
   <script src="app/controllers.js"></script>
@@ -25,25 +25,28 @@
       </button>
       <a class="navbar-brand" href="#">{{title}}</a>
     </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html">Home <span class="sr-only">(current)</span></a></li>
+        <li><a href="about.html">About Me</a></li>
+      </ul>
   </div>
 </nav>
-<div id="intro" class="box">
-  <h4>How do stable relationships emerge from chaos?</h4>
-  <div id="introtext">
-      <p><b>Relational networks</b> are an analytical tool for exploring how networks of relationships change over time. Think of them as graph theory with a play button.</p>
-      <p>These networks are defined as follows:
-        <ul>
+<div id="intro" class="well well-lg">
+  <h3>How do stable relationships emerge from chaos?</h3>
+      <p><b>Edgless networks</b> are an analytical tool for exploring how flows of information change over time. They are defined as follows:</p>
+        <p><ul>
             <li>Let there be a set of N nodes.</li>
             <li>Let each node be capable of transmitting packets of information to other nodes.</li>
             <li>Let each node choose which other node or nodes it will transmit to according to some probability distribution.</li>
             <li>When a node sends or receives a packet, let its probability distribution be transformed in some way.</li>
-       </ul>
-      </p>
-      It is my hope that by studying this class of networks we might gain a deeper understanding of systems in which discrete entities dynamically share information.
+       </ul></p>
+      
+      <p>By modifying the parameters of edgless networks it is possible to create a wide range of phenomena, from networks which resemble crystalline structures with flaws to large dynamic scale-free networks. It is my hope that by studying this class of networks we might gain a deeper understanding of systems in which discrete entities dynamically share information.</p>
   </div>
 </div>
 <div id="relnetwork">
-  <svg id="visualization" ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">  
+  <svg id="visualization"  ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">  
     <circle ng-repeat="node in nodes" 
         ng-attr-cx="{{xpos($index)}}" 
         ng-attr-cy="{{ypos($index)}}" 
@@ -69,16 +72,20 @@
   </svg> 
   <div id="legend">
     <em>A simple relational network. Each node has a "stability" value, indicated by its size. A node with high stability will always send its packet to the same place in the grid, while a node with low stability will randomly rotate where it sends it packet. Lines are drawn to illustrate the formation of stable edges within the network.</em>
+  </div>
+</div>
   <form id="inputs" name="settings">
     <h3>Settings</h3>
-    <label>Grid Size</label>
+    <label>Grid Size</label><br>
+    <em>Controls the number of nodes in the grid.</em>
     <input type="text"
       name="input"
        ng-model="gridsize"
        slider
        options="gridsizeOptions"
        >
-    <label>Leakiness </label>
+    <label>Leakiness </label> <br>
+    <em>Controls the liklihood that packets will fail to transmit to a node within the grid.</em>
     <input type="text"
       name="input"
        ng-model="bitEscapeChance"
@@ -86,27 +93,31 @@
        options="percentageOptions"
        >
     <br>
-    <label>Inital Bits </label>
+    <label>Inital Packets</label> <br>
+    <em>Controls the initial stability of nodes within the grid.</em>
     <input type="text"
       name="input"
        ng-model="initialStability"
        slider
        options="initialBitOptions"
        >  
-    <label>Bit Range</label>
+    <label>Transmission Range</label> <br>
+    <em>Controls the distance within the grid that a node is capable of transmitting packets.</em>
     <input type="text"
       name="locality"
       ng-model="locality"
       slider
       options="rangeOptions">
       <br>
-    <label>Bits per Node</label>
+    <label>Packets per Node</label> <br>
+    <em>Controls the number of nodes that a packet is capable of transmitting.</em>
     <input type="text"
       name="numTargets"
       ng-model="numTargets"
       slider
       options="bitsPerNodeOptions">
-    <label>Bit Visibility</label>
+    <label>Packet Visibility</label> <br>
+    <em>Makes packets partially or fully transparent to prevent distracting motion.</em>
     <input type="text"
       name="bitVisibility"
       ng-model="bitVisibility"

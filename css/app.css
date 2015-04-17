@@ -1,43 +1,61 @@
+/*http://coolors.co/171a21-7692ff-abd2fa-3d518c-234b92*/
+
+body {
+	font-family: 'Arimo', sans-serif;
+}
+
 @media (min-width: 900px) { 
-	#intro {
+	#relnetwork {
 		margin-left: 10%;
 		width:40%;
 		float:left;
 	}
 
-	#relnetwork {
+	#legend {
+		margin-right:5%;
+	}
+
+	#inputs {
 		margin-right: 10%;
 		width:40%;
 		float:right; 
 	}
-}
 
-@media (max-width: 900px) {
-		#intro {
-		margin-left: 10%;
-		width:80%;
-		margin-right:10%;
-	}
-
-	#relnetwork {
-		margin-left: 10%;
-		width:80%;
-		margin-right: 10%;
-	}
-}
-
-.jslider {
+	.jslider {
 	width:90%;
 	margin-right: 5%;
 	margin-left: 5%;
 	margin-top:20px;
 	margin-bottom:20px;
 }
+}
 
+@media (max-width: 900px) {
+	#relnetwork {
+		margin-left: 10%;
+		width:80%;
+		margin-right:10%;
+	}
 
+	#inputs {
+		margin-left: 10%;
+		width:80%;
+		margin-right: 10%;
+	}
 
-#inputs {
-	margin:20px;
+	.jslider {
+	width:80%;
+	margin-right: 5%;
+	margin-left: 5%;
+	margin-top:20px;
+	margin-bottom:20px;
+	}
+}
+
+#intro {
+	margin-left: 10%;
+	margin-right: 10%;
+	width:80%;
 }
 
 .blue {
