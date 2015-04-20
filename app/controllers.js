@@ -194,8 +194,6 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 			$scope.nodes[index].stability++
 		}
 	}
-
-
 });
 
 //Set options for the sliders.
@@ -237,6 +235,32 @@ var setSliderOptions = function(scope,gridroot) {
 	}
 }
 
+relvisApp.controller('stabilityGraphController', function ($scope, $interval) {
+	var vals;
+	$scope.point_radius=2;
+	$interval(function() {
+		vals=[];
+		for (var i = $scope.nodes.length - 1; i >= 0; i--) {
+			vals.push(
+				$scope.nodes[i].stability
+			);
+		};
+		vals.sort();
+		$scope.points=[];
+		console.log(vals);
+		for (var i = 0; i < vals.length; i++) {
+			$scope.points.push({
+				y:100-vals[i]*100/20,
+				x:i*3
+			})
+		};
+		$scope.graph={
+			width:$scope.points.length*3,
+			height:100
+		}
+	},500);
+});
+
 var randInt = function(min,max) {
 	return (Math.floor(Math.random() * (max - min + 1)) + min);
 }
@@ -246,4 +270,4 @@ Array.prototype.remove = function(from, to) {
   var rest = this.slice((to || from) + 1 || this.length);
   this.length = from < 0 ? this.length + from : from;
   return this.push.apply(this, rest);
-};
+}

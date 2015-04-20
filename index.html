@@ -73,6 +73,33 @@
   <div id="legend">
     <em>A simple relational network. Each node has a "stability" value, indicated by its size. A node with high stability will always send its packet to the same place in the grid, while a node with low stability will randomly rotate where it sends it packet. Lines are drawn to illustrate the formation of stable edges within the network.</em>
   </div>
+  <div id="stabilityCurve" ng-controller="stabilityGraphController">
+    <svg ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">
+      <line
+        ng-attr-x1="0"
+        ng-attr-y1="0"
+        ng-attr-x2="0"
+        ng-attr-y2="{{graph.height}}"
+        class="blue_line"
+        >
+      </line>
+      <line
+        ng-attr-x1="0"
+        ng-attr-y1="{{graph.height}}"
+        ng-attr-x2="{{graph.width}}"
+        ng-attr-y2="{{graph.height}}"
+        class="blue_line"
+        >
+        </line>
+      </line>
+      <circle ng-repeat="point in points"
+        ng-attr-cx="{{point.x}}"
+        ng-attr-cy="{{point.y}}"
+        ng-attr-r="{{point_radius}}"
+        class="blue">
+        </circle>
+      </svg>
+  </div>
 </div>
   <form id="inputs" name="settings">
     <h3>Settings</h3>
