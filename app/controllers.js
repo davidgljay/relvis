@@ -1,6 +1,6 @@
 var relvisApp = angular.module('relvisApp', ['ngSlider']);
 
-relvisApp.controller('relvisCtrl', function ($scope, $interval) {
+relvisApp.controller('relvisCtrl', function ($scope, $interval, $window) {
 
 	//Variables used to define the behavior of the model.
 	$scope.maxStability = 15
@@ -16,9 +16,11 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 	var gridroot
 
 	//Styling variables
-	var padding = 60
+	var visualizationPadding = 60
+	$scope.visualizationMargin=10;
 	var maxLineWidth = 4
 	var timeCounter = 0
+	var windowWidth = $window.innerWidth;
 	$scope.title = "Edgless Networks"
 
 	//Variables used to track timers that update the model and provide animation
@@ -32,11 +34,11 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 
 	//Calculate the X and Y position of nodes.
 	var xpos = $scope.xpos = function(index) {
-		return index%gridroot * padding + padding
+		return index%gridroot * visualizationPadding + visualizationPadding
 	}
 
 	var ypos = $scope.ypos = function(index) {
-		return Math.floor(index/gridroot) * padding + padding;
+		return Math.floor(index/gridroot) * visualizationPadding + visualizationPadding;
 	}
 
 	//Transmit a bit from one node to another.
@@ -128,9 +130,11 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 	//Reset the grid.
 	//Eliminate all bits and lines, and set all nodes to the default stability.
 	var resetGrid = function() {
-		gridroot = Math.min(Math.round(Math.sqrt($scope.gridsize)),8);
-		var height = ($scope.gridsize/gridroot+1)*padding;
-		var width = (gridroot+1)*padding
+		var maxWidth = windowWidth*.8;
+		gridroot = Math.min(Math.round(Math.sqrt($scope.gridsize)),maxWidth/visualizationPadding);
+		$scope.visualizationMargin = (maxWidth-gridroot*visualizationPadding)/2;
+		var height = ($scope.gridsize/gridroot+1)*visualizationPadding;
+		var width = (gridroot+1)*visualizationPadding
 		$scope.graph= {
 			height:height,
 			width:width
@@ -192,6 +196,12 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 		}
 	})
 
+$scope.$watch(function(){
+   		return window.innerWidth;
+	}, function(value) {
+       windowWidth = $window.innerWidth;
+       resetGrid();
+  });
 	setSliderOptions($scope, gridroot);
 
 	//Make a node more stable when the user taps it.
@@ -262,7 +272,6 @@ relvisApp.controller('stabilityGraphController', function ($scope, $interval) {
 		};
 		vals.sort();
 		$scope.points=[];
-		console.log(vals);
 		for (var i = 0; i < vals.length; i++) {
 			$scope.points.push({
 				y:100-vals[i]*100/20,
