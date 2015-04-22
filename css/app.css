@@ -62,6 +62,10 @@ body {
 	font-size: 12px;
 }
 
+#inputs div.jslider-value, #inputs .jslider-bg i.range {
+	visibility:hidden;
+}
+
 .blue {
 	fill:#26466D;
 }

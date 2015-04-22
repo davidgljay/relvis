@@ -172,7 +172,13 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 			from:0,
 			to:gridroot,
 			step:1,
-			skin:"round"
+			css: {
+	          	background: {"background-color": "white"},
+	   	       	before: {"background-color": "#26466D"},
+   		       	default: {"background-color": "#26466D"},
+        	  	after: {"background-color": "#26466D"},
+          		pointer: {"background-color": "#26466D"}          
+        	} 
 		}
 	})
 
@@ -199,18 +205,26 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval) {
 
 //Set options for the sliders.
 var setSliderOptions = function(scope,gridroot) {
+	var css={
+          background: {"background-color": "white"},
+          before: {"background-color": "#26466D"},
+          default: {"background-color": "#26466D"},
+          after: {"background-color": "#26466D"},
+          pointer: {"background-color": "#26466D"}          
+        } 
+
 	scope.gridsizeOptions = {
 		from:0,
 		to:100,
 		step:1,
-		skin:"round"
+		css:css
 	}
 
 	scope.initialBitOptions = {
 		from:0,
 		to:5,
 		step:1,
-		skin:"round"
+		css:css
 	}
 
 	scope.percentageOptions = {
@@ -218,21 +232,21 @@ var setSliderOptions = function(scope,gridroot) {
 		to:100,
 		step:1,
 		dimension:"%",
-		skin:"round"
+		css:css
 	}
 
 	scope.rangeOptions = {
 		from:0,
 		to:gridroot,
 		step:1,
-		skin:"round"
+		css:css
 	}
 
 	scope.bitsPerNodeOptions = {
 		from:0,
 		to:3,
 		step:1,
-		skin:"round"
+		css:css
 	}
 }
 
