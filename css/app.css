@@ -1,11 +1,61 @@
-#inputs {
-	margin:20px;
+/*http://coolors.co/171a21-7692ff-abd2fa-3d518c-234b92*/
+
+body {
+	font-family: 'Arimo', sans-serif;
 }
 
-.jslider {
-	max-width:400px;
+@media (min-width: 900px) { 
+	#relnetwork {
+		margin-left: 10%;
+		width:40%;
+		float:left;
+	}
+
+	#legend {
+		margin-right:5%;
+	}
+
+	#inputs {
+		margin-right: 10%;
+		width:40%;
+		float:right; 
+	}
+
+	.jslider {
+	width:90%;
+	margin-right: 5%;
+	margin-left: 5%;
 	margin-top:20px;
 	margin-bottom:20px;
+}
+}
+
+@media (max-width: 900px) {
+	#relnetwork {
+		margin-left: 10%;
+		width:80%;
+		margin-right:10%;
+	}
+
+	#inputs {
+		margin-left: 10%;
+		width:80%;
+		margin-right: 10%;
+	}
+
+	.jslider {
+	width:80%;
+	margin-right: 5%;
+	margin-left: 5%;
+	margin-top:20px;
+	margin-bottom:20px;
+	}
+}
+
+#intro {
+	margin-left: 10%;
+	margin-right: 10%;
+	width:80%;
 }
 
 #inputs div.jslider-value, #inputs .jslider-label {

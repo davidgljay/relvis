@@ -2,14 +2,15 @@
 <html lang="en" ng-app="relvisApp">
 <head>
   <meta charset="utf-8">
-  <title>Relationship Model Visualization</title>
+  <title>Edgeless Network Visualization</title>
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" type="text/css" href="node_modules/ng-slider/dist/css/ng-slider.min.css">
-
+  <link href='http://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
   <script src="bower_components/angular/angular.js"></script>
   <script src="node_modules/ng-slider/dist/ng-slider.min.js"></script>
   <script src="app/controllers.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body ng-controller="relvisCtrl">
 <nav <nav class="navbar navbar-default no-selection">
@@ -22,11 +23,30 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">{{'Relationship Visualization'}}</a>
+      <a class="navbar-brand" href="#">{{title}}</a>
     </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html">Home <span class="sr-only">(current)</span></a></li>
+        <li><a href="about.html">About Me</a></li>
+      </ul>
   </div>
 </nav>
-<svg ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">  
+<div id="intro" class="well well-lg">
+  <h3>How do stable relationships emerge from chaos?</h3>
+      <p><b>Edgless networks</b> are an analytical tool for exploring how flows of information change over time. They are defined as follows:</p>
+        <p><ul>
+            <li>Let there be a set of N nodes.</li>
+            <li>Let each node be capable of transmitting packets of information to other nodes.</li>
+            <li>Let each node choose which other node or nodes it will transmit to according to some probability distribution.</li>
+            <li>When a node sends or receives a packet, let its probability distribution be transformed in some way.</li>
+       </ul></p>
+      
+      <p>By modifying the parameters of edgless networks it is possible to create a wide range of phenomena, from networks which resemble crystalline structures with flaws to large dynamic scale-free networks. It is my hope that by studying this class of networks we might gain a deeper understanding of systems in which discrete entities dynamically share information.</p>
+  </div>
+</div>
+<div id="relnetwork">
+  <svg id="visualization"  ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">  
     <circle ng-repeat="node in nodes" 
         ng-attr-cx="{{xpos($index)}}" 
         ng-attr-cy="{{ypos($index)}}" 
@@ -49,50 +69,87 @@
         class="blue"
         ng-style="{opacity:{{bitVisibility/100}}}">
     </circle>
-</svg> 
-<form id="inputs" name="settings">
-  <label>Grid Size</label>
-  <input type="text"
-    name="input"
-     ng-model="gridsize"
-     slider
-     options="gridsizeOptions"
-     >
-  <label>Leakiness</label>
-  <input type="text"
-    name="input"
-     ng-model="bitEscapeChance"
-      slider
-     options="percentageOptions"
-     >
-  <br>
-  <label>Inital Bits</label>
-  <input type="text"
-    name="input"
-     ng-model="initialStability"
-     slider
-     options="initialBitOptions"
-     >  
-  <label>Bit Range</label>
-  <input type="text"
-    name="locality"
-    ng-model="locality"
-    slider
-    options="rangeOptions">
+  </svg> 
+  <div id="legend">
+    <em>A simple relational network. Each node has a "stability" value, indicated by its size. A node with high stability will always send its packet to the same place in the grid, while a node with low stability will randomly rotate where it sends it packet. Lines are drawn to illustrate the formation of stable edges within the network.</em>
+  </div>
+  <div id="stabilityCurve" ng-controller="stabilityGraphController">
+    <svg ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}">
+      <line
+        ng-attr-x1="0"
+        ng-attr-y1="0"
+        ng-attr-x2="0"
+        ng-attr-y2="{{graph.height}}"
+        class="blue_line"
+        >
+      </line>
+      <line
+        ng-attr-x1="0"
+        ng-attr-y1="{{graph.height}}"
+        ng-attr-x2="{{graph.width}}"
+        ng-attr-y2="{{graph.height}}"
+        class="blue_line"
+        >
+        </line>
+      </line>
+      <circle ng-repeat="point in points"
+        ng-attr-cx="{{point.x}}"
+        ng-attr-cy="{{point.y}}"
+        ng-attr-r="{{point_radius}}"
+        class="blue">
+        </circle>
+      </svg>
+  </div>
+</div>
+  <form id="inputs" name="settings">
+    <h3>Settings</h3>
+    <label>Grid Size</label><br>
+    <em>Controls the number of nodes in the grid.</em>
+    <input type="text"
+      name="input"
+       ng-model="gridsize"
+       slider
+       options="gridsizeOptions"
+       >
+    <label>Leakiness </label> <br>
+    <em>Controls the liklihood that packets will fail to transmit to a node within the grid.</em>
+    <input type="text"
+      name="input"
+       ng-model="bitEscapeChance"
+        slider
+       options="percentageOptions"
+       >
     <br>
-  <label>Bits per Node</label>
-  <input type="text"
-    name="numTargets"
-    ng-model="numTargets"
-    slider
-    options="bitsPerNodeOptions">
-
-  <label>Bit Visibility</label>
-  <input type="text"
-    name="bitVisibility"
-    ng-model="bitVisibility"
-    slider
-    options="percentageOptions">
+    <label>Inital Packets</label> <br>
+    <em>Controls the initial stability of nodes within the grid.</em>
+    <input type="text"
+      name="input"
+       ng-model="initialStability"
+       slider
+       options="initialBitOptions"
+       >  
+    <label>Transmission Range</label> <br>
+    <em>Controls the distance within the grid that a node is capable of transmitting packets.</em>
+    <input type="text"
+      name="locality"
+      ng-model="locality"
+      slider
+      options="rangeOptions">
+      <br>
+    <label>Packets per Node</label> <br>
+    <em>Controls the number of nodes that a packet is capable of transmitting.</em>
+    <input type="text"
+      name="numTargets"
+      ng-model="numTargets"
+      slider
+      options="bitsPerNodeOptions">
+    <label>Packet Visibility</label> <br>
+    <em>Makes packets partially or fully transparent to prevent distracting motion.</em>
+    <input type="text"
+      name="bitVisibility"
+      ng-model="bitVisibility"
+      slider
+      options="percentageOptions">
   </form> 
 </body>
 </html>
