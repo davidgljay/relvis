@@ -21,6 +21,8 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval, $window) {
 	var maxLineWidth = 4
 	var timeCounter = 0
 	var windowWidth = $window.innerWidth;
+	$scope.show_legend=false;
+	$scope.show_settings=false;
 	$scope.title = "Edgless Networks"
 
 	//Variables used to track timers that update the model and provide animation
@@ -130,8 +132,9 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval, $window) {
 	//Reset the grid.
 	//Eliminate all bits and lines, and set all nodes to the default stability.
 	var resetGrid = function() {
-		var maxWidth = windowWidth*.8;
-		gridroot = Math.min(Math.round(Math.sqrt($scope.gridsize)),maxWidth/visualizationPadding);
+		var maxWidth = windowWidth*.74;
+		gridroot = Math.min(Math.round(Math.sqrt($scope.gridsize)),Math.floor(maxWidth/visualizationPadding));
+		console.log(gridroot);
 		$scope.visualizationMargin = (maxWidth-gridroot*visualizationPadding)/2;
 		var height = ($scope.gridsize/gridroot+1)*visualizationPadding;
 		var width = (gridroot+1)*visualizationPadding
@@ -179,7 +182,7 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval, $window) {
 			css: {
 	          	background: {"background-color": "white"},
 	   	       	before: {"background-color": "#26466D"},
-   		       	default: {"background-color": "#26466D"},
+          		default: {"background-color": "rgba(0,0,0,0)"},
         	  	after: {"background-color": "#26466D"},
           		pointer: {"background-color": "#26466D"}          
         	} 
@@ -218,7 +221,7 @@ var setSliderOptions = function(scope,gridroot) {
 	var css={
           background: {"background-color": "white"},
           before: {"background-color": "#26466D"},
-          default: {"background-color": "#26466D"},
+          default: {"background-color": "rgba(0,0,0,0)"},
           after: {"background-color": "#26466D"},
           pointer: {"background-color": "#26466D"}          
         } 
