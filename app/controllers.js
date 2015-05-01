@@ -1,6 +1,5 @@
-var relvisApp = angular.module('relvisApp', ['ngSlider']);
-
-relvisApp.controller('relvisCtrl', function ($scope, $interval, $window) {
+angular.module('relvis.contollers', ['ngSlider'])
+	.controller('relvisCtrl', function ($scope, $interval, $window) {
 
 	//Variables used to define the behavior of the model.
 	$scope.maxStability = 15
@@ -33,6 +32,13 @@ relvisApp.controller('relvisCtrl', function ($scope, $interval, $window) {
 	var nodes = $scope.nodes=[]
 	var bits = $scope.bits=[]
 	var lines = $scope.lines=[]
+
+	$scope.barChartTestSata = [ 
+		{name: "Greg", score: 98}, 
+		{name: "Ari", score: 96}, 
+		{name: 'Q', score: 75}, 
+		{name: "Loser", score: 48} 
+	];
 
 	//Calculate the X and Y position of nodes.
 	var xpos = $scope.xpos = function(index) {

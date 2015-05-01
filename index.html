@@ -26,6 +26,7 @@
 <body ng-controller="relvisCtrl">
 <div id="relnetwork">
   <h3>Edgeless Networks</h3>
+  <div d3-bars bar-height="20" bar-padding="5"></div>
   <svg id="visualization"  ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}" ng-style={"margin-left":visualizationMargin}>  
     <circle ng-repeat="node in nodes" 
         ng-attr-cx="{{xpos($index)}}" 
