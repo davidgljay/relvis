@@ -176,6 +176,10 @@ h2 {
 	fill:#26466D;
 }
 
+.gravnode {
+	visibility: hidden;
+}
+
 .blue_line {
 	stroke:#26466D;
 	stroke-width:2;

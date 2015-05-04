@@ -29,7 +29,8 @@
 <body ng-controller="relvisCtrl">
 <div id="relnetwork">
   <h3>Edgeless Networks</h3>
-  <d3bars bar-height="20" bar-padding="5" data="d3Data"></d3bars>
+  <relvis bar-height="20" bar-padding="5" data="d3Data">
+  </relvis>
   <svg id="visualization"  ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}" ng-style={"margin-left":visualizationMargin}>  
     <circle ng-repeat="node in nodes" 
         ng-attr-cx="{{xpos($index)}}" 
@@ -45,7 +46,7 @@
     	ng-attr-y2="{{ypos(line.target)}}"
     	ng-style="line.style"
     	class="blue_line">
-    </line>
+    </line>    
     <circle ng-repeat="bit in bits" 
         ng-attr-cx="{{bit.x}}" 
         ng-attr-cy="{{bit.y}}" 
