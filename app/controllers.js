@@ -1,6 +1,6 @@
 angular.module('relvis.contollers', ['ngSlider'])
 	.controller('relvisCtrl', function ($scope, $interval, $window) {
-
+		
 	//Variables used to define the behavior of the model.
 	$scope.maxStability = 15
 	$scope.bitEscapeChance = 0
@@ -33,7 +33,9 @@ angular.module('relvis.contollers', ['ngSlider'])
 	var bits = $scope.bits=[]
 	var lines = $scope.lines=[]
 
-	$scope.barChartTestSata = [ 
+	// $scope.barChartTestData = "stuff";
+
+	$scope.data = [ 
 		{name: "Greg", score: 98}, 
 		{name: "Ari", score: 96}, 
 		{name: 'Q', score: 75}, 
@@ -140,7 +142,6 @@ angular.module('relvis.contollers', ['ngSlider'])
 	var resetGrid = function() {
 		var maxWidth = windowWidth*.74;
 		gridroot = Math.min(Math.round(Math.sqrt($scope.gridsize)),Math.floor(maxWidth/visualizationPadding));
-		console.log(gridroot);
 		$scope.visualizationMargin = (maxWidth-gridroot*visualizationPadding)/2;
 		var height = ($scope.gridsize/gridroot+1)*visualizationPadding;
 		var width = (gridroot+1)*visualizationPadding
@@ -220,7 +221,35 @@ $scope.$watch(function(){
 		}
 	}
 
+})
+.controller('stabilityGraphController', function ($scope, $interval) {
+	var vals;
+	$scope.point_radius=2;
+	$interval(function() {
+		vals=[];
+		for (var i = $scope.nodes.length - 1; i >= 0; i--) {
+			vals.push(
+				$scope.nodes[i].stability
+			);
+		};
+		vals.sort();
+		$scope.points=[];
+		for (var i = 0; i < vals.length; i++) {
+			$scope.points.push({
+				y:100-vals[i]*100/20,
+				x:i*3
+			})
+		};
+		$scope.graph={
+			width:$scope.points.length*3,
+			height:100
+		}
+	},500);
 });
+
+var randInt = function(min,max) {
+	return (Math.floor(Math.random() * (max - min + 1)) + min);
+}
 
 //Set options for the sliders.
 var setSliderOptions = function(scope,gridroot) {
@@ -267,35 +296,6 @@ var setSliderOptions = function(scope,gridroot) {
 		step:1,
 		css:css
 	}
-}
-
-relvisApp.controller('stabilityGraphController', function ($scope, $interval) {
-	var vals;
-	$scope.point_radius=2;
-	$interval(function() {
-		vals=[];
-		for (var i = $scope.nodes.length - 1; i >= 0; i--) {
-			vals.push(
-				$scope.nodes[i].stability
-			);
-		};
-		vals.sort();
-		$scope.points=[];
-		for (var i = 0; i < vals.length; i++) {
-			$scope.points.push({
-				y:100-vals[i]*100/20,
-				x:i*3
-			})
-		};
-		$scope.graph={
-			width:$scope.points.length*3,
-			height:100
-		}
-	},500);
-});
-
-var randInt = function(min,max) {
-	return (Math.floor(Math.random() * (max - min + 1)) + min);
 }
 
 // Array Remove - By John Resig (MIT Licensed)

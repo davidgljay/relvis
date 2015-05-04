@@ -1,6 +1,6 @@
-angular.module('relvis.directives', ['d3']) 
-	.directive('barChart', ['d3Service', 
-		function(d3Service) { 
+angular.module('relvis.directives', []) 
+	.directive('d3bars', ['$document',
+		function() { 
 			return { 
 				restrict: 'EA', 
 				scope: { 
@@ -8,7 +8,6 @@ angular.module('relvis.directives', ['d3'])
 					// bi-directional data-binding 
 				},
 				link: function(scope, element, attrs) { 
-					d3Service.d3().then(function(d3) { 
 						var svg = d3.select(element[0])
 							.append("svg")
 							.style('width', '100%');
@@ -22,24 +21,30 @@ angular.module('relvis.directives', ['d3'])
 						};
 
 						// hard-code data 
-						scope.data = [ 
-							{name: "Greg", score: 98}, 
-							{name: "Ari", score: 96}, 
-							{name: 'Q', score: 75}, 
-							{name: "Loser", score: 48} 
-						];
+						// scope.data = [ 
+						// 	{name: "Greg", score: 98}, 
+						// 	{name: "Ari", score: 96}, 
+						// 	{name: 'Q', score: 75}, 
+						// 	{name: "Loser", score: 48} 
+						// ];
 
 						// Watch for resize event 
 						scope.$watch(
 							function() { 
-								return angular.element($window)[0].innerWidth; 
+								return angular.element(window)[0].innerWidth; 
 							}, 
 							function() { 
 								scope.render(scope.data); 
 						});
 
-						scope.render = function(data) { 
+						scope.$watch('$parent.data', 
+							function(newVals, oldVals) { 
+								console.log("Registered data change:" + newVals);
+								return scope.render(newVals); 
+							}, true);
 
+						scope.render = function(data) { 
+							console.log("Rendering:" + data);
 							// remove all previous items before render 
 							svg.selectAll('*').remove();
 
@@ -48,9 +53,9 @@ angular.module('relvis.directives', ['d3'])
 								return;
 
 							// setup variables 
-							var width = d3.select(ele[0]).node().offsetWidth - margin, 
+							var width = d3.select(element[0]).node().offsetWidth - margin, 
 							// calculate the height 
-							height = scope.data.length * (barHeight + barPadding), 
+							height = scope.$parent.data.length * (barHeight + barPadding), 
 							// Use the category20() scale function for multicolor support 
 							color = d3.scale.category20(), 
 							// our xScale 
@@ -61,7 +66,6 @@ angular.module('relvis.directives', ['d3'])
 								.range([0, width]);
 							// set the height based on the calculations above 
 							svg.attr('height', height);
-
 							//create the rectangles for the bar chart 
 							svg.selectAll('rect') 
 								.data(data).enter() 
@@ -81,7 +85,6 @@ angular.module('relvis.directives', ['d3'])
 											return xScale(d.score); 
 										});
 						};
-					});
 				} 
 			}
 		}

@@ -1,1 +1,1 @@
-angular.module('relvisApp', ['relvis.controllers', 'relvis.directives']);
+angular.module('relvisApp', ['relvis.contollers', 'relvis.directives']);

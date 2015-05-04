@@ -8,8 +8,11 @@
   <link rel="stylesheet" type="text/css" href="node_modules/ng-slider/dist/css/ng-slider.min.css">
   <link href='http://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
   <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/d3/d3.js"></script>
   <script src="node_modules/ng-slider/dist/ng-slider.min.js"></script>
   <script src="app/controllers.js"></script>
+  <script src="app/directives.js"></script>
+  <script src="app/app.js"></script
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <script>
@@ -26,7 +29,7 @@
 <body ng-controller="relvisCtrl">
 <div id="relnetwork">
   <h3>Edgeless Networks</h3>
-  <div d3-bars bar-height="20" bar-padding="5"></div>
+  <d3bars bar-height="20" bar-padding="5" data="d3Data"></d3bars>
   <svg id="visualization"  ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}" ng-style={"margin-left":visualizationMargin}>  
     <circle ng-repeat="node in nodes" 
         ng-attr-cx="{{xpos($index)}}" 
