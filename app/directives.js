@@ -34,24 +34,41 @@ angular.module('relvis.directives', [])
 								return angular.element(window)[0].innerWidth; 
 							}, 
 							function() { 
-								scope.render(scope.data); 
+								scope.render(); 
 						});
 
 						scope.$watch('$parent.data', 
 							function(newVals, oldVals) { 
-								return scope.render(newVals); 
+								return scope.render(); 
 							}, true);
 
-						scope.render = function(data) { 
+						scope.render = function() { 
 
 							// remove all previous items before render 
 							svg.selectAll('*').remove();
 
-							// If we don't pass any data, return out of the element 
-							if (!data) 
+							var nodes = scope.$parent.nodes.slice();
+							if (!nodes) 
 								return;
 
-							var gravnode=[0];
+							nodes.push({
+								"gravnode":true,
+								stability:20
+							})
+
+							var gravlinks = [];
+
+							for (var i = nodes.length - 1; i >= 0; i--) {
+								if (!nodes[i].gravnode)
+								gravlinks.push({
+									source:nodes.length-1,
+									target:i
+								});
+							};
+
+							console.log(gravlinks)
+
+
 							// setup variables 
 							var width = d3.select(element[0]).node().offsetWidth - margin, 
 							// calculate the height 
@@ -60,21 +77,13 @@ angular.module('relvis.directives', [])
 							color = d3.scale.category20(),
 
 							force = d3.layout.force() 
-								.charge(-100)
-								.linkDistance(200) 
+								.charge(-80)
+								.links(gravlinks)
+								.linkDistance(100)
+								.linkStrength(1)
 								.size([width, height])
-								.nodes(scope.$parent.nodes)
+								.nodes(nodes)
 								.start();
-
-							console.log(d3.layout.force())
-
-							svg.selectAll(".gravnode")
-								.data(gravnode)
-								.enter()
-								.append("circle")
-									.attr("cx",width/2)
-									.attr("cy", height/2)
-									.attr("class", "gravnode");
 
 							// gravforce = d3.layout.force()
 							// 	.charge(-200)
@@ -87,7 +96,7 @@ angular.module('relvis.directives', [])
 							svg.attr('width', width);
 
 							var node = svg.selectAll(".node") 
-								.data(scope.$parent.nodes) 
+								.data(nodes) 
 								.enter()
 									.append("circle") 
 									.attr("class", "node") 
@@ -100,15 +109,23 @@ angular.module('relvis.directives', [])
 							force.on("tick", 
 								function() { 
 									node.attr("cx", function(d) { 
-										return d.x; 
+										if (d.gravnode) {
+											return width/2;
+										} else {
+											return d.x; 											
+										}
 									}) 
-									.attr("cy", function(d) { 
-										return d.y; 
+									.attr("cy", function(d) {
+										if (d.gravnode) {
+											return height/2;
+										} else {
+											return d.y; 
+										}
 									}); 
-									force.charge(function(d) {
-
-										return (d.stability+1)*-20;
+									force.linkDistance(function(d) {
+										return 100-d.target.stability*4;
 									})
+									// .linkStrength(1)
 									.start();
 								});
 
