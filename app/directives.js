@@ -51,33 +51,40 @@ angular.module('relvis.directives', [])
 							if (!data) 
 								return;
 
+							var gravnode=[0];
 							// setup variables 
 							var width = d3.select(element[0]).node().offsetWidth - margin, 
 							// calculate the height 
 							height = width, 
 							// Use the category20() scale function for multicolor support 
-							color = d3.scale.category20(), 
+							color = d3.scale.category20(),
 
-							// set the height based on the calculations above 
 							force = d3.layout.force() 
-								.charge(-120) 
-								.linkDistance(30) 
+								.charge(-100)
+								.linkDistance(200) 
 								.size([width, height])
 								.nodes(scope.$parent.nodes)
-								.links(scope.$parent.lines)
 								.start();
+
+							console.log(d3.layout.force())
+
+							svg.selectAll(".gravnode")
+								.data(gravnode)
+								.enter()
+								.append("circle")
+									.attr("cx",width/2)
+									.attr("cy", height/2)
+									.attr("class", "gravnode");
+
+							// gravforce = d3.layout.force()
+							// 	.charge(-200)
+							// 	.size([width,height])
+							// 	.nodes(scope.$parent.nodes)
+							// 	.start();
+
 
 							svg.attr('height', height);
 							svg.attr('width', width);
-
-							var link = svg.selectAll(".link") 
-								.data(scope.$parent.lines) 
-								.enter()
-								.append("line") 
-								.attr("class", "link") 
-								.style("stroke-width", function(d) { 
-									return Math.sqrt(d.value); 
-								});
 
 							var node = svg.selectAll(".node") 
 								.data(scope.$parent.nodes) 
@@ -92,25 +99,17 @@ angular.module('relvis.directives', [])
 
 							force.on("tick", 
 								function() { 
-									link.attr("x1", function(d) { 
-										return d.source.x; 
-									}) 
-									.attr("y1", function(d) { 
-										return d.source.y; 
-									}) 
-									.attr("x2", function(d) { 
-										return d.target.x; 
-									}) 
-									.attr("y2", function(d) { 
-										return d.target.y; 
-									}); 
-
 									node.attr("cx", function(d) { 
 										return d.x; 
 									}) 
 									.attr("cy", function(d) { 
 										return d.y; 
 									}); 
+									force.charge(function(d) {
+
+										return (d.stability+1)*-20;
+									})
+									.start();
 								});
 
 							//create the rectangles for the bar chart 
