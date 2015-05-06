@@ -53,18 +53,13 @@ angular.module('relvis.contollers', ['ngSlider'])
 
 	//Transmit a bit from one node to another.
 	var transmit = function(sender, target) {
-			var senderx = xpos(sender)
-			var sendery = ypos(sender)
-			var targetx = xpos(target)
-			var targety = ypos(target)
-
-			bits.push({
+			var newBit = {
 				sender:sender,
 				target:target,
-				x:senderx, 
-				y:sendery, 
 				completion:0
-			})
+			}
+			bits.push(newBit)
+			$scope.$broadcast("newBit", newBit);
 	}
 
 	//Function which lets a node find a new target.
@@ -85,22 +80,27 @@ angular.module('relvis.contollers', ['ngSlider'])
 
 	//Animate the bits as they move from one node to another. 
 	//When a bit reaches a node, increase that node's stability.
-	var setBitLoop = function() {
-		return $interval(function() {
-			for (var i = bits.length - 1; i >= 0; i--) {
-				if (bits[i].completion<100) {
-					bits[i].completion++
-					bits[i].x = bits[i].completion/100*(xpos(bits[i].target)-xpos(bits[i].sender)) + xpos(bits[i].sender)
-					bits[i].y = bits[i].completion/100*(ypos(bits[i].target)-ypos(bits[i].sender)) + ypos(bits[i].sender)
-					if(bits[i].completion==100 && nodes[bits[i].target] && nodes[bits[i].target].stability < $scope.maxStability) {
-						nodes[bits[i].target].stability += stabilityBoost
-					}				
-				} else {
-					bits.remove(i)
-				}
-			};
-		},1)
-	}
+	// var setBitLoop = function() {
+	// 	return $interval(function() {
+	// 		for (var i = bits.length - 1; i >= 0; i--) {
+	// 			if (bits[i].completion<100) {
+	// 				bits[i].completion++
+	// 				bits[i].x = bits[i].completion/100*(xpos(bits[i].target)-xpos(bits[i].sender)) + xpos(bits[i].sender)
+	// 				bits[i].y = bits[i].completion/100*(ypos(bits[i].target)-ypos(bits[i].sender)) + ypos(bits[i].sender)
+	// 				if(bits[i].completion==100 && nodes[bits[i].target] && nodes[bits[i].target].stability < $scope.maxStability) {
+	// 					nodes[bits[i].target].stability += stabilityBoost
+	// 				}				
+	// 			} else {
+	// 				bits.remove(i)
+	// 			}
+	// 		};
+	// 	},1)
+	// }
+	$scope.$on('bitComplete', function(event, bit) {
+			if(nodes[bit.target].stability < $scope.maxStability) {
+				nodes[bit.target].stability += stabilityBoost
+			}		
+	})
 
 	//Cycle through all of the nodes.
 	//If a node has some stability, transmit a bit and decrease its stability.
@@ -171,10 +171,10 @@ angular.module('relvis.contollers', ['ngSlider'])
 		}
 		transmitLoop = setTransmitLoop()
 
-		if (bitLoop) {
-			$interval.cancel(bitLoop)
-		}
-		bitLoop = setBitLoop()
+		// if (bitLoop) {
+		// 	$interval.cancel(bitLoop)
+		// }
+		// bitLoop = setBitLoop()
 
 		nodes = $scope.nodes
 	}

@@ -15,7 +15,18 @@ angular.module('relvis.directives', [])
 					var margin = parseInt(attrs.margin) || 20, 
 					barHeight = parseInt(attrs.barHeight) || 20, 
 					barPadding = parseInt(attrs.barPadding) || 5,
+					bitArray = [],
+					nodes=[],
 					bit;
+
+					// for (var i = 100 - 1; i >= 0; i--) {
+					// 	bitArray.push({
+					// 		target:0,
+					// 		sender:0,
+					// 		completion:0
+
+					// 	});
+					// 	};
 
 					window.onresize = function() { 
 						scope.$apply(); 
@@ -43,23 +54,48 @@ angular.module('relvis.directives', [])
 							return scope.render(); 
 						}, true);
 
-					scope.$watch('$parent.bits',
-						function(newVals, oldVals) {
-							//TODO: Possibly handle bit transmittion internally, that will let us run an .enter() and exit command rather than refreshing the array.
-						bit = svg.selectAll("bit")
-							.data(scope.$parent.bits)
-							.enter()
-								.append("circle")
-								.attr("r",2)
-								.attr("class","bit blue");
-						},true)
+					// scope.$watch('$parent.bits',
+					// 	function(newVals, oldVals) {
+					// 	//This function is only called once, rather than every time the bit array is updated. 
+					// 	//The ugly way to do this is to have an event broadcast from the controller, then broadcast back when completion=100. That may be what I have to do though.
+					// 		for (var i = newVals.length - 1; i >= 0; i--) {
+					// 			if (i<bitArray.length) {
+					// 				bitArray[i] = newVals[i]
+					// 			}
+					// 		};
+					// 	});
+
+
+					var xpos = function(i) {
+						return nodes[i].x;
+					};
+					var ypos = function(i) {
+						return nodes[i].y;
+					};
+
+					scope.$on('newBit', function(event, bitData) {
+							bitArray.push(bitData);
+							svg.selectAll(".bit").remove();
+							bit = svg.selectAll(".bit")
+								.data(bitArray)
+								.enter()
+									.append("circle")
+									.attr("r",2)
+									.attr("class","bit blue")
+									.attr("cx", function(d) {
+											return xpos(d.sender)
+										})
+									.attr("cy", function(d) {
+											return ypos(d.sender)
+										});
+					})
 
 					scope.render = function() { 
 
 						// remove all previous items before render 
 						svg.selectAll('*').remove();
 
-						var nodes = scope.$parent.nodes.slice();
+						nodes = scope.$parent.nodes.slice();
 						if (!nodes) 
 							return;
 
@@ -69,13 +105,20 @@ angular.module('relvis.directives', [])
 						})
 
 						var gravlinks = [];
+						var targetLinks = [];
 
 						for (var i = nodes.length - 1; i >= 0; i--) {
-							if (!nodes[i].gravnode)
-							gravlinks.push({
-								source:nodes.length-1,
-								target:i
-							});
+							if (!nodes[i].gravnode) {
+								gravlinks.push({
+									source:nodes.length-1,
+									target:i
+								});
+								targetLinks.push({
+									source:i,
+									target:nodes[nodes[i].targets[0]]
+								})
+
+							}
 						};
 
 
@@ -85,13 +128,21 @@ angular.module('relvis.directives', [])
 						height = width, 
 						// Use the category20() scale function for multicolor support 
 						color = d3.scale.category20(),
-
+						//TODO: add node links and gravity links to the same linkset, apply different classes and strengths to them programatically
 						force = d3.layout.force() 
 							.charge(-200)
 							.links(gravlinks)
 							.linkDistance(200)
-							.linkStrength(1)
+							.linkStrength(.4)
 							.size([width, height])
+							.nodes(nodes)
+							.start();
+
+						linkforce = d3.layout.force()
+							.links(targetLinks)
+							.linkDistance(80)
+							.linkStrength(0)
+							.size([width,height])
 							.nodes(nodes)
 							.start();
 
@@ -113,12 +164,35 @@ angular.module('relvis.directives', [])
 								.attr("r", 5)  
 								.call(force.drag);
 
-						var bit = svg.selectAll(".bit")
-							.data(scope.$parent.bits)
+						var link = svg. selectAll(".link")
+							.data(targetLinks)
 							.enter()
-								.append("circle")
-								.attr("r",2)
-								.attr("class","bit blue");
+								.append("line")
+								.attr("x1",function(d) {
+									return d.source.x
+								})
+								.attr("x2", function(d) {
+									return d.target.x
+								})
+								.attr("y1", function(d) {
+									return d.source.y
+								})
+								.attr("y2", function(d) {
+									return d.target.y
+								});
+
+						bit = svg.selectAll(".bit")
+								.data(bitArray)
+								.enter()
+									.append("circle")
+									.attr("r",2)
+									.attr("class","bit blue")
+									.attr("cx", function(d) {
+											return xpos(d.sender)
+										})
+									.attr("cy", function(d) {
+											return ypos(d.sender)
+										});
 
 						force.on("tick", 
 							function() { 
@@ -145,31 +219,49 @@ angular.module('relvis.directives', [])
 								.start();
 								bit.attr("cx", function(d) {
 										return d.completion/100*(xpos(d.target)-xpos(d.sender)) + xpos(d.sender)
+										return d.x;
 								})
 								.attr("cy", function(d) {
+										d.completion++;
 										return d.completion/100*(ypos(d.target)-ypos(d.sender)) + ypos(d.sender)
 								})
-								//TODO: add bit motion;
-							});
+								for (var i = bitArray.length - 1; i >= 0; i--) {
+									if (bitArray[i].completion>=100) {
+										scope.$emit('bitComplete', bitArray[i]);
+										bitArray.remove(i);
+									}
+								};
+								for (var i = targetLinks.length - 1; i >= 0; i--) {
+									targetLinks[i].target = nodes[nodes[i].targets[0]];
+								};
+								link.attr("x1",function(d) {
+									return d.source.x
+								})
+								.attr("x2", function(d) {
+									return d.target.x
+								})
+								.attr("y1", function(d) {
+									return d.source.y
+								})
+								.attr("y2", function(d) {
+									return d.target.y
+								})
+								.attr("class", function(d) {
+									if (d.source.stability>10) {
+										return "blue_line";
+									} else {
+										return "";
+									}
+								});
+								linkforce.linkStrength(function(d) {
+									if (d.source.stability>10) {
+										return .01;
+									} else {
+										return 0;
+									}
+								})
+						});
 
-						var xpos = function(i) {
-							return nodes[i].x;
-						};
-						var ypos = function(i) {
-							return nodes[i].y;
-						};
-							// $interval(function() {
-							// 		for (var i = bits.length - 1; i >= 0; i--) {
-							// 			if (bits[i].completion<100) {
-							// 				bits[i].completion++
-							// 				bits[i].x = bits[i].completion/100*(xpos(bits[i].target)-xpos(bits[i].sender)) + xpos(bits[i].sender)
-							// 				bits[i].y = bits[i].completion/100*(ypos(bits[i].target)-ypos(bits[i].sender)) + ypos(bits[i].sender)			
-							// 			} else {
-							// 				bits.remove(i)
-							// 			}
-							// 			};
-							// 		},1)
-							// };
 					}
 				} 
 			}
