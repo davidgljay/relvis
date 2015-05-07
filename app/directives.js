@@ -17,7 +17,19 @@ angular.module('relvis.directives', [])
 					barPadding = parseInt(attrs.barPadding) || 5,
 					bitArray = [],
 					nodes=[],
-					bit;
+					bit,
+					linkSettings = {
+						linkStrength: {
+							gravlink: .4,
+							rellink: 0
+						},
+						linkDistance: {
+							gravlink: 200,
+							rellink : 80
+						}
+					};
+
+
 
 					// for (var i = 100 - 1; i >= 0; i--) {
 					// 	bitArray.push({
@@ -32,14 +44,6 @@ angular.module('relvis.directives', [])
 						scope.$apply(); 
 					};
 
-					// hard-code data 
-					// scope.data = [ 
-					// 	{name: "Greg", score: 98}, 
-					// 	{name: "Ari", score: 96}, 
-					// 	{name: 'Q', score: 75}, 
-					// 	{name: "Loser", score: 48} 
-					// ];
-
 					// Watch for resize event 
 					scope.$watch(
 						function() { 
@@ -53,18 +57,6 @@ angular.module('relvis.directives', [])
 						function(newVals, oldVals) { 
 							return scope.render(); 
 						}, true);
-
-					// scope.$watch('$parent.bits',
-					// 	function(newVals, oldVals) {
-					// 	//This function is only called once, rather than every time the bit array is updated. 
-					// 	//The ugly way to do this is to have an event broadcast from the controller, then broadcast back when completion=100. That may be what I have to do though.
-					// 		for (var i = newVals.length - 1; i >= 0; i--) {
-					// 			if (i<bitArray.length) {
-					// 				bitArray[i] = newVals[i]
-					// 			}
-					// 		};
-					// 	});
-
 
 					var xpos = function(i) {
 						return nodes[i].x;
@@ -104,18 +96,19 @@ angular.module('relvis.directives', [])
 							stability:20
 						})
 
-						var gravlinks = [];
-						var targetLinks = [];
+						var linkArray = [];
 
 						for (var i = nodes.length - 1; i >= 0; i--) {
 							if (!nodes[i].gravnode) {
-								gravlinks.push({
+								linkArray.push({
 									source:nodes.length-1,
-									target:i
+									target:i,
+									type:"gravlink"
 								});
-								targetLinks.push({
+								linkArray.push({
 									source:i,
-									target:nodes[nodes[i].targets[0]]
+									target:nodes[nodes[i].targets[0]],
+									type:"rellink"
 								})
 
 							}
@@ -131,18 +124,14 @@ angular.module('relvis.directives', [])
 						//TODO: add node links and gravity links to the same linkset, apply different classes and strengths to them programatically
 						force = d3.layout.force() 
 							.charge(-200)
-							.links(gravlinks)
-							.linkDistance(200)
-							.linkStrength(.4)
+							.links(linkArray)
+							.linkDistance(function(d) {
+								return linkSettings.linkDistance[d.type];
+							})
+							.linkStrength(function(d) {
+								return linkSettings.linkStrength[d.type];
+							})
 							.size([width, height])
-							.nodes(nodes)
-							.start();
-
-						linkforce = d3.layout.force()
-							.links(targetLinks)
-							.linkDistance(80)
-							.linkStrength(0)
-							.size([width,height])
 							.nodes(nodes)
 							.start();
 
@@ -165,7 +154,7 @@ angular.module('relvis.directives', [])
 								.call(force.drag);
 
 						var link = svg. selectAll(".link")
-							.data(targetLinks)
+							.data(linkArray)
 							.enter()
 								.append("line")
 								.attr("x1",function(d) {
@@ -214,9 +203,21 @@ angular.module('relvis.directives', [])
 									return d.stability/2 + 1
 								}); 
 								force.linkDistance(function(d) {
-									return 200-d.target.stability*8;
+									if (d.type=="gravlink") {
+										return 200-d.target.stability*8;
+									} else {
+										return linkSettings.linkDistance[d.type];
+									}
+								})
+								.linkStrength(function(d) {
+									if (d.type=="rellink" && d.sender != null && d.sender.stability>10) {
+										return .1/(16-d.sender.stability);
+									} else {
+										return linkSettings.linkStrength[d.type];
+									}
 								})
 								.start();
+
 								bit.attr("cx", function(d) {
 										return d.completion/100*(xpos(d.target)-xpos(d.sender)) + xpos(d.sender)
 										return d.x;
@@ -225,14 +226,18 @@ angular.module('relvis.directives', [])
 										d.completion++;
 										return d.completion/100*(ypos(d.target)-ypos(d.sender)) + ypos(d.sender)
 								})
+
 								for (var i = bitArray.length - 1; i >= 0; i--) {
 									if (bitArray[i].completion>=100) {
 										scope.$emit('bitComplete', bitArray[i]);
 										bitArray.remove(i);
 									}
 								};
-								for (var i = targetLinks.length - 1; i >= 0; i--) {
-									targetLinks[i].target = nodes[nodes[i].targets[0]];
+
+								for (var i = linkArray.length - 1; i >= 0; i--) {
+									if (linkArray.type=="rellink") {
+										linkArray[i].target = nodes[nodes[i].targets[0]];
+									}
 								};
 								link.attr("x1",function(d) {
 									return d.source.x
@@ -247,19 +252,19 @@ angular.module('relvis.directives', [])
 									return d.target.y
 								})
 								.attr("class", function(d) {
-									if (d.source.stability>10) {
+									if (d.source.stability>10 && d.type=="rellink") {
 										return "blue_line";
 									} else {
 										return "";
 									}
-								});
-								linkforce.linkStrength(function(d) {
-									if (d.source.stability>10) {
-										return .01;
+								})
+								.attr("opacity", function(d) {
+									if (d.source.stability>10 && d.type=="rellink") {
+										return (d.source.stability-10)/5;
 									} else {
 										return 0;
 									}
-								})
+								});;
 						});
 
 					}
