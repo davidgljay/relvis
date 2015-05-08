@@ -237,21 +237,22 @@ angular.module('relvis.directives', [])
 								};
 
 								for (var i = linkArray.length - 1; i >= 0; i--) {
-									if (linkArray.type=="rellink") {
+									if (linkArray[i].type=="rellink" && nodes[i] != null) {
 										linkArray[i].target = nodes[nodes[i].targets[0]];
+										console.log(linkArray);
 									}
 								};
 								link.attr("x1",function(d) {
 									return d.source.x
 								})
 								.attr("x2", function(d) {
-									return d.source.x
+									return d.target.x
 								})
 								.attr("y1", function(d) {
 									return d.source.y
 								})
 								.attr("y2", function(d) {
-									return d.source.y
+									return d.target.y
 								})
 								.attr("class", function(d) {
 									if (d.source.stability>10 && d.type=="rellink") {
@@ -266,7 +267,7 @@ angular.module('relvis.directives', [])
 									} else {
 										return 0;
 									}
-								});;
+								});
 						});
 
 					}
