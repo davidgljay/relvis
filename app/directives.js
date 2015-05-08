@@ -29,7 +29,9 @@ angular.module('relvis.directives', [])
 						}
 					};
 
-
+					//TODO: set watcher to handle resizing
+					//TODO: add smothing.
+					//TODO: set maxstability dynamically
 
 					// for (var i = 100 - 1; i >= 0; i--) {
 					// 	bitArray.push({
@@ -243,13 +245,13 @@ angular.module('relvis.directives', [])
 									return d.source.x
 								})
 								.attr("x2", function(d) {
-									return d.target.x
+									return d.source.x
 								})
 								.attr("y1", function(d) {
 									return d.source.y
 								})
 								.attr("y2", function(d) {
-									return d.target.y
+									return d.source.y
 								})
 								.attr("class", function(d) {
 									if (d.source.stability>10 && d.type=="rellink") {

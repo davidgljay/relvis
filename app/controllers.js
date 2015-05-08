@@ -6,7 +6,7 @@ angular.module('relvis.contollers', ['ngSlider'])
 	$scope.bitEscapeChance = 0
 	$scope.minradius = 2
 	$scope.bitradius = 3
-	$scope.gridsize = 25
+	$scope.gridsize = 16
 	$scope.initialStability = 1 
 	$scope.bitVisibility = 100
 	$scope.numTargets=1
