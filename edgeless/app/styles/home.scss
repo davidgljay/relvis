@@ -1,0 +1,215 @@
+/*http://coolors.co/171a21-7692ff-abd2fa-3d518c-234b92*/
+
+body {
+	font-family: 'Arimo', sans-serif;
+}
+
+h2 {
+	text-align: center;
+}
+
+@media (min-width: 700px) {
+
+	h2 {
+		font-size: 34px;
+	}
+
+	body {
+		font-size: 18px;
+	}
+
+	#intro li {
+		font-size: 22px;
+	}
+
+	#aboutme {
+		margin-top: 20px;
+		margin-left: 10%;
+		width:40%;
+		float:left;
+	}
+
+	#djpic {
+		width:35%;
+		margin-left: 5%;
+		margin-right: 10%;
+		float:right;
+	}
+
+}
+
+@media (max-width: 700px)  {
+	h2 {
+		font-size: 24px;
+	}
+	
+	body {
+		font-size: 14px;
+	}
+
+	#intro li {
+		font-size: 16px;
+	}
+
+
+	#aboutme {
+		margin-top: 20px;
+		margin-left: 10%;
+		margin-right: 10%;
+		width:80%;
+	}
+
+	#djpic {
+		width:80%;
+		margin-left: 10%;
+		margin-right: 10%;
+	}
+
+
+}
+
+@media (min-width: 768px) {
+	.container {
+    max-width: 100%;
+	}
+
+}
+
+#relnetwork {
+	margin-left: 10%;
+	margin-right: 10%;
+	width:80%;
+}
+
+#inputs {
+	margin-right: 20%;
+	margin-left: 20%;
+	width:60%;
+	padding-bottom: 20px;
+}
+
+.jslider {
+	width:90%;
+	margin-right: 5%;
+	margin-left: 5%;
+	margin-top:20px;
+	margin-bottom:20px;
+}
+
+#intro-container {
+	background-image: url("../images/coral.jpg");
+	padding:20px;
+	margin-top: 20px;
+	background-size:cover;
+	background-position:center;
+	}
+
+#intro {
+	margin-top:20px;
+	margin-left: 10%;
+	margin-right: 10%;
+	width:80%;
+}
+
+#intro li {
+	font-weight: bold;
+	padding:5px;
+}
+
+#intro b {
+	font-size: 24px;
+}
+
+#aboutme_container {
+	padding:20px;
+}
+
+#aboutme_container img {
+	margin-top:40px;
+}
+
+
+#inputs div.jslider-value, #inputs .jslider-label {
+	font-size: 12px;
+}
+
+#inputs div.jslider-value, #inputs .jslider-bg i.range {
+	visibility:hidden;
+}
+
+#inputs .jslider.sliderCSS div.jslider-pointer {
+	width:20px;
+	height:20px;
+}
+
+#inputs .jslider div.jslider-bg i {
+	height:14px;
+}
+
+#inputs .jslider div.jslider-bg i {
+	margin-top: 3px;
+	height:8px;
+}
+
+#footer {
+	margin-top:20px;
+	margin-bottom: 50px;
+}
+
+.center {
+	text-align: center;
+}
+
+.legend {
+	margin-right:20%;
+	margin-left:20%;
+	width:60%;
+	text-align: center;
+	font-style:italic;
+	color: grey;
+}
+
+.well {
+	background-color: rgba(255,255,255,.75);
+	color:rgb(65,65,65);
+}
+.glyphicon {
+	cursor: pointer;
+	color:grey;
+}
+
+.blue {
+	fill:#26466D;
+}
+
+.blue_line {
+	stroke:#26466D;
+	stroke-width:2;
+}
+
+.no_line {
+	opacity:0.5;
+	stroke-width:1;
+}
+
+.small_line {
+	opacity:.25;
+	stroke-width:2;
+}
+
+.med_line {
+	opacity:.5;
+	stroke-width:3;
+}
+
+.big_line {
+	opacity:1;
+	stroke-width:4;
+}
+
+.no-selection {
+    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -khtml-user-select: none; /* webkit (konqueror) browsers */
+    -ms-user-select: none; /* IE10+ */
+}

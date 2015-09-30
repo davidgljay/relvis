@@ -1,31 +1,4 @@
-<!doctype html>
-<html lang="en" ng-app="relvisApp">
-<head>
-  <meta charset="utf-8">
-  <title>Edgeless Networks</title>
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" href="css/app.css">
-  <link rel="stylesheet" type="text/css" href="node_modules/ng-slider/dist/css/ng-slider.min.css">
-  <link href='http://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
-  <script src="bower_components/angular/angular.js"></script>
-  <script src="node_modules/ng-slider/dist/ng-slider.min.js"></script>
-  <script src="app/controllers.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-42811961-2', 'auto');
-  ga('send', 'pageview');
-
-</script>
-</head>
-<body ng-controller="relvisCtrl">
 <div id="relnetwork">
-  <h3>Edgeless Networks</h3>
   <svg id="visualization"  ng-attr-height="{{graph.height}}" ng-attr-width="{{graph.width}}" ng-style={"margin-left":visualizationMargin}>  
     <circle ng-repeat="node in nodes" 
         ng-attr-cx="{{xpos($index)}}" 
@@ -35,12 +8,12 @@
         class="blue">
     </circle>
     <line ng-repeat="line in lines"
-    	ng-attr-x1="{{xpos(line.sender)}}"
-    	ng-attr-y1="{{ypos(line.sender)}}"
-    	ng-attr-x2="{{xpos(line.target)}}"
-    	ng-attr-y2="{{ypos(line.target)}}"
-    	ng-style="line.style"
-    	class="blue_line">
+      ng-attr-x1="{{xpos(line.sender)}}"
+      ng-attr-y1="{{ypos(line.sender)}}"
+      ng-attr-x2="{{xpos(line.target)}}"
+      ng-attr-y2="{{ypos(line.target)}}"
+      ng-style="line.style"
+      class="blue_line">
     </line>
     <circle ng-repeat="bit in bits" 
         ng-attr-cx="{{bit.x}}" 
@@ -159,9 +132,3 @@
     I am an activist and open science enthusiast living in Brooklyn, NY. I am developing analytical toolsets related to edgless networks in collaboration with a a small group of researchers from a range of fields. I have a particular interest (though little formal background) in the study of relationship formation and structure in systems biology, neural networks, and self-organizing human systems such as social movements. I am employed in the research arm of a major technology company, though this work is in no way affiliated with my employer. If you are interested in having a conversation I gleefully respond to tweets <a href="http://www.twitter.com/davidgljay" target="_blank">@davidgljay</a>.
     </div>
   </div>
-  <div id="footer">
-  <hr>
-  </div>
-
-</body>
-</html>
