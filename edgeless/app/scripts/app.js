@@ -25,7 +25,12 @@ angular
         controller: 'relvisCtrl',
         controllerAs: 'relvis'
       })
-      .when('/about', {
+      .when('/blog/:post', {
+        templateUrl: 'views/blog.html',
+        controller: 'blogCtrl',
+        controllerAs: 'blog'
+      })
+      .when('/blog', {
         templateUrl: 'views/blog.html',
         controller: 'blogCtrl',
         controllerAs: 'blog'
@@ -33,4 +38,9 @@ angular
       .otherwise({
         redirectTo: '/'
       });
+  })
+  .run(['$rootScope', '$route', function($rootScope, $route) {
+    $rootScope.$on('$routeChangeSuccess', function() {
+        $rootScope.active = $route.current.controllerAs;
   });
+}]);
